@@ -1,0 +1,39 @@
+from django.shortcuts import render, redirect
+from .models import Viaje
+from .forms import ViajeForm
+
+# 🏠 Vista principal
+def inicio(request):
+    return render(request, 'viajes_app/inicio.html')
+
+
+def crear_viaje(request):
+    mensaje = ""
+
+    if request.method == "POST":
+        form = ViajeForm(request.POST)
+        if form.is_valid():
+            form.save()
+            mensaje = "Viaje creado correctamente"
+            form = ViajeForm()
+    else:
+        form = ViajeForm()
+
+    return render(request, 'viajes_app/crear_viaje.html', {
+        'form': form,
+        'mensaje': mensaje
+    })
+
+
+def listar_viajes(request):
+    query = request.GET.get('q')
+
+    if query:
+        viajes = Viaje.objects.filter(destino__icontains=query)
+    else:
+        viajes = Viaje.objects.all()
+
+    return render(request, 'viajes_app/listar_viajes.html', {
+        'viajes': viajes,
+        'query': query
+    })

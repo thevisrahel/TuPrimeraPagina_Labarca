@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>📋 Lista de viajes</h2>
+
+<form method="get">
+    <input type="text" name="q" placeholder="Buscar destino" value="{{ query|default:'' }}">
+    <button type="submit">Buscar</button>
+</form>
+
+<ul>
+    {% for viaje in viajes %}
+        <li>
+            <strong>{{ viaje.destino }}</strong> - {{ viaje.fecha }} <br>
+            {{ viaje.descripcion }}
+        </li>
+    {% empty %}
+</ul>
+<p>No se encontró el destino</p>
+<ul>
+    {% endfor %}
+</ul>
+
+{% endblock %}

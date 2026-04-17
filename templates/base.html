@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Viajes</title>
+</head>
+<body>
+
+<nav>
+    <a href="{% url 'inicio' %}">🏠 Inicio</a>
+    <a href="{% url 'crear_viaje' %}">➕ Crear viaje</a>
+    <a href="{% url 'listar_viajes' %}">📋 Lista de viajes</a>
+</nav>
+
+<hr>
+
+{% block content %}
+{% endblock %}
+
+</body>
+</html>
