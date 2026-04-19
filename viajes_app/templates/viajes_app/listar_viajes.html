@@ -1,15 +1,14 @@
 {% extends 'base.html' %}
 
-    {% block texto_pestania  %}
-        Listas de viajes
-    {% endblock  %}
+{% block texto_pestania %}
+    Listas de viajes
+{% endblock %}
 
-        {% block header_h1%}
-            LISTAS DE VIAJES
-        {% endblock %}
+{% block header_h1 %}
+    LISTAS DE VIAJES
+{% endblock %}
 
 {% block contenido %}
-
 
 <form method="get">
     <input type="text" name="q" placeholder="Buscar destino" value="{{ query|default:'' }}">
@@ -17,16 +16,17 @@
 </form>
 
 <ul>
-    {% for viaje in viajes %}
-        <li>
-            <strong>{{ viaje.destino }}</strong> - {{ viaje.fecha }} <br>
-            {{ viaje.descripcion }}
-        </li>
-    {% empty %}
-</ul>
-<p>No se encontró el destino</p>
-<ul>
-    {% endfor %}
+{% for viaje in viajes %}
+    <div style="border:1px solid #ccc; padding:10px; margin:10px;">
+        <h3>
+            <a href="{% url 'detalle_viaje' viaje.id %}">
+                {{ viaje.destino }}
+            </a>
+        </h3>
+        <p>{{ viaje.fecha }}</p>
+        <p>{{ viaje.descripcion }}</p>
+    </div>
+{% endfor %}
 </ul>
 
 {% endblock %}

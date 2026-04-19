@@ -36,3 +36,7 @@ def listar_viajes(request):
         'viajes': viajes,
         'query': query
     })
+    
+def detalle_viajes(request, id_viaje):
+    viaje = Viaje.objects.get(id=id_viaje)
+    return render(request, 'viajes_app/detalle_viajes.html', {'viaje': viaje})

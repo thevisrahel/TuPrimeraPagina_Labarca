@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block texto_pestania %}
+    Detalle de viaje
+{% endblock %}
+
+{% block header_h1 %}
+    Viaje: {{ viaje.pk }}
+{% endblock %}
+
+{% block contenido %}
+    <p>Destino: {{ viaje.destino }}</p>
+    <p>Descripcion: {{ viaje.descripcion }}</p>
+    <p>Fecha: {{ viaje.fecha }}</p>
+{% endblock %}
