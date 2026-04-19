@@ -1,7 +1,15 @@
 {% extends 'base.html' %}
 
-{% block content %}
-<h2>➕ Crear viaje</h2>
+    {% block texto_pestania  %}
+        Crear viaje
+    {% endblock  %}
+
+    {% block header_h1%}
+        CREAR VIAJE
+    {% endblock %}
+
+
+{% block contenido %}
 
 <form method="post">
     {% csrf_token %}

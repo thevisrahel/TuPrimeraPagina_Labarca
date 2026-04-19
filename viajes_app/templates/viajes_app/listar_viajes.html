@@ -1,7 +1,15 @@
 {% extends 'base.html' %}
 
-{% block content %}
-<h2>📋 Lista de viajes</h2>
+    {% block texto_pestania  %}
+        Listas de viajes
+    {% endblock  %}
+
+        {% block header_h1%}
+            LISTAS DE VIAJES
+        {% endblock %}
+
+{% block contenido %}
+
 
 <form method="get">
     <input type="text" name="q" placeholder="Buscar destino" value="{{ query|default:'' }}">
