@@ -13,7 +13,9 @@ def crear_viaje(request):
     if request.method == "POST":
         form = ViajeForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
+            viaje = form.save(commit=False)
+            viaje.propietario = request.user  # <- asigna el dueño
+            viaje.save()
             mensaje = "Viaje creado correctamente"
             form = ViajeForm()
     else:
@@ -29,9 +31,9 @@ def listar_viajes(request):
     query = request.GET.get('q')
 
     if query:
-        viajes = Viaje.objects.filter(destino__icontains=query)
+        viajes = Viaje.objects.filter(propietario=request.user, destino__icontains=query) 
     else:
-        viajes = Viaje.objects.all()
+        viajes = Viaje.objects.filter(propietario=request.user) 
 
     return render(request, 'viajes_app/listar_viajes.html', {
         'viajes': viajes,
@@ -40,19 +42,18 @@ def listar_viajes(request):
     
 @login_required    
 def detalle_viajes(request, id_viaje):
-    viaje = Viaje.objects.get(id=id_viaje)
+    viaje = get_object_or_404(Viaje, id=id_viaje, propietario=request.user)  
     return render(request, 'viajes_app/detalle_viajes.html', {'viaje': viaje})
 
 @login_required
 def actualizar_viajes(request, id_viaje):
-    viaje = get_object_or_404(Viaje, id=id_viaje)
+    viaje = get_object_or_404(Viaje, id=id_viaje, propietario=request.user)
 
     if request.method == "POST":
         formulario = ViajeForm(request.POST, request.FILES, instance=viaje)
         if formulario.is_valid():
             formulario.save()
             return redirect('viajes_app:listar_viajes')
-
     else:
         formulario = ViajeForm(instance=viaje)
 
@@ -63,7 +64,6 @@ def actualizar_viajes(request, id_viaje):
     
 @login_required
 def eliminar_viajes(request, id_viaje):
-    viaje = get_object_or_404(Viaje, id=id_viaje)
+    viaje = get_object_or_404(Viaje, id=id_viaje, propietario=request.user)  
     viaje.delete()
     return redirect('viajes_app:listar_viajes')
-

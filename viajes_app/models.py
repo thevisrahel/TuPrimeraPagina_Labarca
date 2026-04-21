@@ -1,6 +1,8 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 class Viaje(models.Model):
+    propietario = models.ForeignKey(User, on_delete=models.CASCADE, related_name='viajes', null=True)
     destino = models.CharField(max_length=100)
     descripcion = models.TextField()
     fecha = models.DateField()
