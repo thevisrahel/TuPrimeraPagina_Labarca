@@ -62,19 +62,45 @@
 
         <div class="collapse navbar-collapse" id="navbarResponsive">
             <ul class="navbar-nav ms-auto py-4 py-lg-0">
-
                 <li class="nav-item">
                     <a class="nav-link px-lg-3 py-3 py-lg-4" href="{% url 'viajes_app:crear_viaje' %}">
                         Crear Viaje
                     </a>
                 </li>
-
                 <li class="nav-item">
                     <a class="nav-link px-lg-3 py-3 py-lg-4" href="{% url 'viajes_app:listar_viajes' %}">
                         Lista de Viajes
                     </a>
                 </li>
+                {% if request.user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link px-lg-3 py-3 py-lg-4" href="{% url "usuarios:perfil" %}">
+                            {{ request.user.username }}
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link px-lg-3 py-3 py-lg-4"
+                        href="#"
+                        onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                            Cerrar sesión
+                        </a>
 
+                        <form id="logout-form" action="{% url 'usuarios:cerrar_sesion' %}" method="post" style="display:none;">
+                            {% csrf_token %}
+                        </form>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link px-lg-3 py-3 py-lg-4" href="{% url 'usuarios:iniciar_sesion' %}">
+                            Iniciar Sesión
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link px-lg-3 py-3 py-lg-4" href="{% url 'usuarios:registro' %}">
+                            Registrarse
+                        </a>
+                    </li>
+                {% endif %}
             </ul>
         </div>
     </div>

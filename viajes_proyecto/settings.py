@@ -38,7 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'viajes_app',
-    'fotos_app'
+    'fotos_app',
+    'usuarios'
 ]
 
 MIDDLEWARE = [
@@ -120,3 +121,5 @@ STATIC_URL = 'static/'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+LOGIN_URL ="/usuarios/iniciar-sesion/"

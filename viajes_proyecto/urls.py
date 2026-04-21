@@ -32,6 +32,7 @@ urlpatterns = [
 
     path('', include('viajes_app.urls')),
     path('fotos/', include('fotos_app.urls')),
+    path('usuarios/', include('usuarios.urls')),
 ]
 
 if settings.DEBUG:

@@ -1,11 +1,12 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Viaje
 from .forms import ViajeForm
+from django.contrib.auth.decorators import login_required
 
 def inicio(request):
     return render(request, 'viajes_app/inicio.html')
 
-
+@login_required
 def crear_viaje(request):
     mensaje = ""
 
@@ -22,7 +23,8 @@ def crear_viaje(request):
         'form': form,
         'mensaje': mensaje
     })
-
+    
+@login_required
 def listar_viajes(request):
     query = request.GET.get('q')
 
@@ -36,12 +38,12 @@ def listar_viajes(request):
         'query': query
     })
     
+@login_required    
 def detalle_viajes(request, id_viaje):
     viaje = Viaje.objects.get(id=id_viaje)
     return render(request, 'viajes_app/detalle_viajes.html', {'viaje': viaje})
 
-
-
+@login_required
 def actualizar_viajes(request, id_viaje):
     viaje = get_object_or_404(Viaje, id=id_viaje)
 
@@ -58,8 +60,10 @@ def actualizar_viajes(request, id_viaje):
         'formulario': formulario,
         'viaje': viaje
     })
-
+    
+@login_required
 def eliminar_viajes(request, id_viaje):
     viaje = get_object_or_404(Viaje, id=id_viaje)
     viaje.delete()
     return redirect('viajes_app:listar_viajes')
+
