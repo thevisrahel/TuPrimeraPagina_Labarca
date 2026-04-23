@@ -10,7 +10,12 @@ class InfoExtra(models.Model):
         related_name="info"
     )
     fecha_nacimiento = models.DateField(null=True, blank=True)
-    avatar = models.ImageField(upload_to="avatars/", null=True, blank=True)
+    avatar = models.ImageField(
+    upload_to="avatars/",
+    null=True,
+    blank=True,
+    default="avatars/default.png"
+)
     es_privado = models.BooleanField(default=False)
 
     def __str__(self):

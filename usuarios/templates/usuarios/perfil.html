@@ -36,20 +36,29 @@
                 <p class="text-muted mb-3">{{ user.email }}</p>
 
                 <!-- ESTADÍSTICAS -->
-                <div class="d-flex justify-content-center gap-5 mb-3">
+                <div class="d-flex justify-content-center gap-5 mb-3 text-center">
 
                     <div>
-                        <h6 class="mb-0">{{ seguidores }}</h6>
-                        <small class="text-muted">Seguidores</small>
+                        <a href="{% url 'usuarios:lista_seguidores' user.username %}" 
+                        class="text-decoration-none text-dark d-block">
+
+                            <h6 class="mb-0">{{ seguidores }}</h6>
+                            <small class="text-muted">Seguidores</small>
+
+                        </a>
                     </div>
 
                     <div>
-                        <h6 class="mb-0">{{ siguiendo }}</h6>
-                        <small class="text-muted">Siguiendo</small>
+                        <a href="{% url 'usuarios:lista_siguiendo' user.username %}" 
+                        class="text-decoration-none text-dark d-block">
+
+                            <h6 class="mb-0">{{ siguiendo }}</h6>
+                            <small class="text-muted">Siguiendo</small>
+
+                        </a>
                     </div>
 
                 </div>
-
                 <hr>
 
                 <!-- INFO -->

@@ -31,7 +31,8 @@ urlpatterns = [
 
     path('', include('viajes_app.urls')),
     path('fotos/', include('fotos_app.urls')),
-    path('usuarios/', include('usuarios.urls')),
+    path('usuarios/', include('usuarios.urls')),    
+    path('comentarios/', include('comentarios.urls')),
 ]
 
 if settings.DEBUG:
