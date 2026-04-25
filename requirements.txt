@@ -1,8 +1,9 @@
-asgiref==3.11.1                         # Base para que Django maneje peticiones asíncronas (ASGI)
-Django==6.0.4                           # El framework principal — el núcleo de todo el proyecto
-gunicorn==25.3.0                        # Servidor para producción (reemplaza a 'manage.py runserver')
-packaging==26.1                         # Utilidad para comparar versiones de paquetes
-pillow==12.2.0                          # Librería para procesar imágenes (redimensionar, convertir, etc.)
-python-dotenv==1.2.2                    # Lee el archivo .env donde guardas las credenciales secretas
-sqlparse==0.5.5                         # Formatea y analiza consultas SQL
-tzdata==2026.1                          # Base de datos de zonas horarias del mundo
+asgiref==3.11.1
+Django==6.0.4
+django-widget-tweaks==1.5.1
+gunicorn==25.3.0
+packaging==26.1
+pillow==12.2.0
+python-dotenv==1.2.2
+sqlparse==0.5.5
+tzdata==2026.1
