@@ -1,30 +1,30 @@
-{% extends 'base.html' %}
+{% extends 'base.html' %}                                                  {# Hereda la estructura del template base #}
 
-{% block texto_pestania %}
+{% block texto_pestania %}                                                 {# Bloque para el título de la pestaña #}
     Sesión cerrada
 {% endblock %}
 
-{% block header_h1 %}
+{% block header_h1 %}                                                      {# Bloque para el título principal de la página #}
     ¡Has cerrado sesión!
 {% endblock %}
 
-{% block contenido %}
+{% block contenido %}                                                      {# Bloque principal de contenido #}
 
-<div class="container mt-5" style="max-width: 600px;">
+<div class="container mt-5" style="max-width: 600px;">                    {# Contenedor con ancho máximo limitado #}
 
-    <div class="card shadow-sm text-center p-4">
+    <div class="card shadow-sm text-center p-4">                          {# Tarjeta centrada con sombra y padding #}
 
-        <div class="mb-3">
-            <h3 class="mb-2">Sesión finalizada correctamente</h3>
-            <p class="text-muted">
+        <div class="mb-3">                                                 {# Contenedor con margen inferior #}
+            <h3 class="mb-2">Sesión finalizada correctamente</h3>         {# Título de confirmación de cierre de sesión #}
+            <p class="text-muted">                                         {# Mensaje informativo para el usuario #}
                 Has salido del sistema de forma segura. Puedes volver cuando quieras.
             </p>
         </div>
 
-        </div>
+        </div>                                                             {# Cierre del card #}
 
-    </div>
+    </div>                                                                 {# Cierre extra (posible div sobrante en el original) #}
 
-</div>
+</div>                                                                     {# Cierre del contenedor principal #}
 
 {% endblock %}

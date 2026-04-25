@@ -1,65 +1,62 @@
-{% extends 'base.html' %}
+{% extends 'base.html' %}                                                   {# Hereda la estructura base del sitio (navbar, footer, etc.) #}
 
-{% block texto_pestania %}
+{% block texto_pestania %}                                                   {# Bloque para el título de la pestaña del navegador #}
     Crear viaje
 {% endblock %}
 
-{% block header_h1 %}
+{% block header_h1 %}                                                        {# Bloque para el título del header de la página #}
     CREAR VIAJE
 {% endblock %}
 
-{% block contenido %}
+{% block contenido %}                                                        {# Bloque principal donde va el contenido de la página #}
 
-<div class="container mt-5" style="max-width: 650px;">
+<div class="container mt-5" style="max-width: 650px;">                      {# Contenedor centrado con ancho máximo de 650px #}
 
-    <div class="card shadow-sm border-0 p-4">
+    <div class="card shadow-sm border-0 p-4">                               {# Tarjeta con sombra suave y sin borde #}
 
+        <form method="post" enctype="multipart/form-data">                  {# enctype necesario para poder subir imágenes #}
+            {% csrf_token %}                                                 {# Token de seguridad obligatorio en todo form POST de Django #}
 
-        <form method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-
-            {% for field in form %}
+            {% for field in form %}                                          {# Recorre todos los campos del formulario automáticamente #}
                 <div class="mb-4">
 
-                    <!-- LABEL -->
+                    {# LABEL DEL CAMPO #}
                     <label class="form-label fw-semibold d-block">
-                        {{ field.label }}
-
-                        {% if field.field.required %}
+                        {{ field.label }}                                    {# Nombre del campo (ej: Región, País, Fecha) #}
+                        {% if field.field.required %}                        {# Si el campo es obligatorio muestra un asterisco rojo #}
                             <span class="text-danger">*</span>
                         {% endif %}
                     </label>
 
-                    <!-- INPUT -->
+                    {# INPUT DEL CAMPO #}
                     <div>
-                        {{ field }}
+                        {{ field }}                                          {# Renderiza el input del campo con sus estilos #}
                     </div>
 
-                    <!-- AYUDA -->
-                    {% if field.help_text %}
+                    {# TEXTO DE AYUDA #}
+                    {% if field.help_text %}                                 {# Solo muestra el help_text si el campo tiene uno definido #}
                         <small class="text-muted d-block mt-1">
                             {{ field.help_text }}
                         </small>
                     {% endif %}
 
-                    {% if field.name == "sitio_turistico" %}
-                        <small class="text-muted d-block">
-                            (opcional)
-                        </small>
+                    {# CAMPO OPCIONAL #}
+                    {% if not field.field.required %}                        {# Si el campo no es obligatorio muestra (opcional) automáticamente #}
+                        <small class="text-muted d-block">(opcional)</small>
                     {% endif %}
 
-                    <!-- ERRORES -->
-                    {% if field.errors %}
+                    {# ERRORES DE VALIDACIÓN #}
+                    {% if field.errors %}                                    {# Si el campo tiene errores los muestra en rojo #}
                         <div class="text-danger small mt-1">
-                            {{ field.errors|striptags }}
+                            {{ field.errors|striptags }}                     {# striptags elimina las etiquetas HTML de los mensajes de error #}
                         </div>
                     {% endif %}
 
                 </div>
-            {% endfor %}
+            {% endfor %}                                                     {# Fin del loop de campos #}
 
-            <!-- BOTÓN -->
-            <div class="d-grid mt-3">
+            {# BOTÓN DE ENVÍO #}
+            <div class="d-grid mt-3">                                        {# d-grid hace que el botón ocupe todo el ancho #}
                 <button type="submit" class="btn btn-success">
                     Guardar viaje
                 </button>
@@ -69,7 +66,7 @@
 
     </div>
 
-    {% if mensaje %}
+    {% if mensaje %}                                                         {# Muestra el mensaje de éxito solo si la vista lo envía #}
         <div class="alert alert-info mt-4 text-center">
             {{ mensaje }}
         </div>

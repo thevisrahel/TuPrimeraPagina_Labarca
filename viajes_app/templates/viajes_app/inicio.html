@@ -1,33 +1,39 @@
-{% extends 'base.html' %}
+{% extends 'base.html' %} {# Hereda la estructura base (navbar, footer, layout general) #}
 
 {% block texto_pestania %}
-Inicio
+Inicio {# Texto que aparece en la pestaña del navegador #}
 {% endblock %}
 
 {% block header_h1 %}
-BIENVENIDO A TU PLATAFORMA DE VIAJES
+BIENVENIDO A TU PLATAFORMA DE VIAJES {# Título principal del banner superior #}
 {% endblock %}
 
-{% block contenido %}
+{% block contenido %} {# Inicio del contenido principal de la página #}
 
-<div class="container mt-5 text-center">
+<div class="container mt-5 text-center"> {# Contenedor centrado con margen superior #}
 
-    <div class="card shadow-sm p-5">
+    <div class="card shadow-sm p-5"> {# Tarjeta con sombra y padding interno #}
 
-        <h2 class="mb-3"> Explora el mundo desde aquí</h2>
+        <h2 class="mb-3">
+            Explora el mundo desde aquí {# Mensaje principal motivador #}
+        </h2>
 
         <p class="text-muted mb-4">
             Crea viajes, organiza tus destinos y guarda tus experiencias en un solo lugar.
+            {# Explica la función de la plataforma #}
         </p>
 
-        <div class="mt-4">
+        <div class="mt-4"> {# Espacio superior para separar la frase #}
 
-        <p class="text-muted fst-italic">
-            “Viajar es la única cosa que compras y te hace más rico.”
-        </p>
+            <p class="text-muted fst-italic">
+                Viaja. Descubre. Recuerda
+                {# Frase motivacional sobre viajar #}
+            </p>
+
+        </div>
 
     </div>
 
 </div>
 
-{% endblock %}
+{% endblock %} {# Fin del contenido principal #}

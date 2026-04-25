@@ -1,0 +1,70 @@
+{% extends 'base.html' %}  {# Hereda toda la estructura base del sitio (navbar, estilos, etc.) #}
+
+{% block texto_pestania %}  {# Define el título que aparece en la pestaña del navegador #}
+    Buscar usuarios
+{% endblock %}
+
+{% block header_h1 %}  {# Título principal que probablemente se muestra en el header del sitio #}
+    RESULTADOS DE BÚSQUEDA
+{% endblock %}
+
+{% block contenido %}  {# Contenido principal de la página #}
+
+<div class="container mt-4">  {# Contenedor con margen superior para separar del header #}
+
+    {% if query %}  {# Si el usuario escribió algo en el buscador #}
+        <h4 class="mb-4">
+            Resultados para: "<span class="text-primary">{{ query }}</span>"  {# Muestra lo que se buscó #}
+        </h4>
+    {% endif %}
+
+    {% if resultados %}  {# Si hay resultados encontrados #}
+
+        <div class="row g-3">  {# Grid responsive con separación entre columnas #}
+
+            {% for usuario in resultados %}  {# Itera sobre cada usuario encontrado #}
+                <div class="col-6 col-md-4 col-lg-3">  {# Responsive: 2, 3 o 4 columnas según pantalla #}
+
+                    <div class="card shadow-sm text-center p-3 h-100">  {# Tarjeta visual para cada usuario #}
+
+                        <!-- AVATAR -->
+                        {% if usuario.info and usuario.info.avatar %}  {# Si el usuario tiene perfil extra y avatar #}
+                            <img src="{{ usuario.info.avatar.url }}"
+                                 class="rounded-circle mx-auto mb-3"
+                                 width="100" height="100"
+                                 style="object-fit: cover;">  {# Imagen redonda centrada #}
+                        {% else %}  {# Si NO tiene avatar #}
+                            <div class="rounded-circle bg-secondary mx-auto mb-3"
+                                 style="width:100px;height:100px;"></div>  {# Placeholder gris #}
+                        {% endif %}
+
+                        <!-- USERNAME -->
+                        <h6 class="mb-2">{{ usuario.username }}</h6>  {# Nombre de usuario #}
+
+                        <!-- BOTÓN PERFIL -->
+                        <a href="{% url 'social:ver_perfil' usuario.username %}"
+                           class="btn btn-outline-primary btn-sm mt-auto">  {# Link al perfil del usuario #}
+                            Ver perfil
+                        </a>
+
+                    </div>
+
+                </div>
+            {% endfor %}
+
+        </div>
+
+    {% elif query %}  {# Si se buscó algo pero NO hay resultados #}
+        <div class="alert alert-warning">
+            No se encontraron usuarios.
+        </div>
+
+    {% else %}  {# Si aún no se ha buscado nada #}
+        <div class="alert alert-info">
+            Escribe algo en el buscador para encontrar usuarios.
+        </div>
+    {% endif %}
+
+</div>
+
+{% endblock %}

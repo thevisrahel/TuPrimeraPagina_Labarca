@@ -1,97 +1,103 @@
-{% extends 'base.html' %}
+{% extends 'base.html' %} {# Usa la plantilla base (navbar, footer, estructura general) #}
 
 {% block texto_pestania %}
-Lista de viajes
+Lista de viajes {# Texto que aparece en la pestaña del navegador #}
 {% endblock %}
 
 {% block header_h1 %}
-LISTA DE VIAJES
+LISTA DE VIAJES {# Título grande del banner superior (header) #}
 {% endblock %}
 
-{% block contenido %}
+{% block contenido %} {# Inicio del contenido principal de esta página #}
 
-<div class="container mt-4">
+<div class="container mt-4"> {# Contenedor central con margen superior #}
 
-    <form method="get" class="d-flex mb-4">
+    <form method="get" class="mb-4"> {# Formulario GET (no guarda datos, solo filtra) #}
+        <div class="input-group"> {# Bootstrap: agrupa input + botón en una sola línea #}
 
-        <input type="text"
-               name="q"
-               class="form-control me-2"
-               placeholder="Buscar destino"
-               value="{{ query|default:'' }}">
+            <input type="text"
+                   name="q" {# Parámetro enviado al backend como ?q=valor #}
+                   class="form-control"
+                   placeholder="Buscar destino o país..." {# Texto guía para el usuario #}
+                   value="{{ query|default:'' }}"> {# Mantiene lo que el usuario escribió #}
 
-        <button type="submit" class="btn btn-primary">
-            Buscar
-        </button>
+            <button class="btn btn-primary">
+                Buscar {# Ejecuta el filtro de viajes #}
+            </button>
 
+        </div>
     </form>
 
-    <div class="row">
+    <div class="row"> {# Sistema de columnas Bootstrap #}
 
-        {% for viaje in viajes %}
-            <div class="col-md-4 mb-4">
+        {% for viaje in viajes %} {# Recorre todos los viajes enviados por la vista #}
 
-                <div class="card shadow-sm h-100">
+            <div class="col-md-4 mb-4"> {# 3 cards por fila en pantallas medianas #}
+
+                <div class="card shadow-sm h-100 border-0"> {# Tarjeta con sombra y altura uniforme #}
 
                     <!-- 🖼 IMAGEN -->
-                    {% if viaje.imagen %}
+                    {% if viaje.imagen %} {# Solo muestra imagen si existe #}
                         <img src="{{ viaje.imagen.url }}"
                              class="card-img-top"
-                             style="height: 200px; object-fit: cover;">
+                             style="height: 200px; object-fit: cover;"> {# Recorta imagen sin deformar #}
                     {% endif %}
 
-                    <div class="card-body">
+                    <div class="card-body"> {# Contenido principal de la card #}
 
-                        <!-- 🧠 TITULO (sitio o región) -->
+                        <!-- 🧠 TÍTULO -->
                         <h5 class="card-title">
-                            <a href="{% url 'viajes_app:detalle_viaje' viaje.id %}"
-                               class="text-decoration-none text-dark">
 
-                                {% if viaje.sitio_turistico %}
-                                    {{ viaje.sitio_turistico }}
-                                {% else %}
-                                    {{ viaje.region }}
-                                {% endif %}
+                            <a href="{% url 'viajes_app:detalle_viaje' viaje.id %}"
+                               class="text-decoration-none text-dark fw-bold"> {# Link limpio al detalle #}
+
+                                {{ viaje.sitio_turistico|default:viaje.region }}
+                                {# Si existe sitio turístico lo muestra, si no usa región #}
 
                             </a>
+
                         </h5>
 
                         <!-- 🌍 PAÍS -->
                         <p class="text-muted mb-1">
                             🌍 {{ viaje.pais|default:"No especificado" }}
+                            {# Muestra país o texto por defecto #}
                         </p>
 
-                        <!-- 📅 FECHA + ❤️ LIKES -->
                         <div class="d-flex justify-content-between align-items-center">
 
-                            <p class="text-muted small mb-0">
+                            <small class="text-muted">
                                 📅 {{ viaje.fecha|date:"d M Y" }}
-                            </p>
+                                {# Formatea fecha a día mes año #}
+                            </small>
 
                             <small class="text-muted">
-                                ❤️ {{ viaje.likes.count }}
+                                ❤️ {{ viaje.likes.count|default:0 }}
+                                {# Muestra cantidad de likes (0 si no hay) #}
                             </small>
 
                         </div>
 
                     </div>
 
-                    <div class="card-footer bg-white border-0">
+                    <div class="card-footer bg-white border-0"> {# Footer limpio sin bordes #}
 
                         <div class="d-flex justify-content-between">
 
+                            <!-- ✏️ EDITAR -->
                             <a href="{% url 'viajes_app:actualizar_viaje' viaje.id %}"
                                class="btn btn-warning btn-sm text-white">
-                                Actualizar
+                                Editar
                             </a>
 
+                            <!-- 🗑 ELIMINAR -->
                             <form action="{% url 'viajes_app:eliminar_viaje' viaje.id %}"
                                   method="post">
-                                {% csrf_token %}
+                                {% csrf_token %} {# Protección obligatoria Django contra ataques CSRF #}
 
                                 <button type="submit"
-                                        class="btn btn-danger btn-sm"
-                                        onclick="return confirm('¿Seguro que quieres eliminar este viaje?');">
+                                        class="btn btn-outline-danger btn-sm"
+                                        onclick="return confirm('¿Eliminar este viaje?');">
                                     Eliminar
                                 </button>
 
@@ -105,12 +111,14 @@ LISTA DE VIAJES
 
             </div>
 
-        {% empty %}
+        {% empty %} {# Caso cuando no hay viajes #}
 
-            <div class="col-12">
-                <p class="text-muted text-center">
-                    No hay viajes disponibles
+            <div class="col-12 text-center">
+
+                <p class="text-muted">
+                    No hay viajes disponibles {# Mensaje cuando la lista está vacía #}
                 </p>
+
             </div>
 
         {% endfor %}
@@ -119,4 +127,4 @@ LISTA DE VIAJES
 
 </div>
 
-{% endblock %}
+{% endblock %} {# Fin del bloque contenido #}

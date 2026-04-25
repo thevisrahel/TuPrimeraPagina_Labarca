@@ -1,19 +1,51 @@
-{% extends 'base.html' %}
+{% extends 'base.html' %}                                                  {# Hereda la estructura del template base #}
 
-{% block texto_pestania  %}
+{% block texto_pestania %}                                                 {# Bloque para el título de la pestaña #}
     Registrarse
-{% endblock  %}
+{% endblock %}
 
-{% block header_h1%}
+{% block header_h1 %}                                                      {# Bloque para el título principal de la página #}
     REGISTRARSE
 {% endblock %}
 
-{% block contenido %}
+{% block contenido %}                                                      {# Bloque principal de contenido #}
 
-<form action="{% url "usuarios:registro" %}" method="post"> 
-    {% csrf_token %}
-    {{ formulario_registro}}
-    <input type="submit" value='Registrarse'>
-</form>
+<div class="container mt-5" style="max-width: 400px;">                    {# Contenedor con ancho máximo limitado #}
+
+    <form action="{% url 'usuarios:registro' %}" method="post" class="card p-4 shadow-sm"> {# Formulario POST con estilo de tarjeta #}
+        {% csrf_token %}                                                   {# Token de seguridad obligatorio #}
+
+        {% if formulario_registro.non_field_errors %}                      {# Si hay errores generales del formulario #}
+            <div class="alert alert-danger">                               {# Alerta roja de error #}
+                {{ formulario_registro.non_field_errors }}                 {# Muestra errores no asociados a un campo #}
+            </div>
+        {% endif %}
+
+        {% for field in formulario_registro %}                             {# Itera sobre cada campo del formulario #}
+            <div class="mb-3">                                             {# Contenedor del campo con margen inferior #}
+                <label class="form-label">{{ field.label }}</label>        {# Etiqueta del campo actual #}
+                {{ field }}                                                {# Renderiza el input del campo #}
+
+                {% if field.errors %}                                      {# Si el campo tiene errores #}
+                    <div class="text-danger small">                        {# Contenedor de errores en rojo pequeño #}
+                        {{ field.errors|striptags }}                       {# Muestra errores sin etiquetas HTML #}
+                    </div>
+                {% endif %}
+            </div>
+        {% endfor %}
+
+        <button type="submit" class="btn btn-success w-100">              {# Botón de envío verde a ancho completo #}
+            Crear cuenta
+        </button>
+
+        <div class="text-center mt-3">                                     {# Contenedor centrado con margen superior #}
+            <a href="{% url 'usuarios:iniciar_sesion' %}">                 {# Link para ir al login si ya tiene cuenta #}
+                ¿Ya tienes cuenta? Inicia sesión
+            </a>
+        </div>
+
+    </form>
+
+</div>
 
 {% endblock %}

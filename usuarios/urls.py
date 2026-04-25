@@ -1,51 +1,65 @@
-from django.urls import path
-from . import views
-from django.contrib.auth.views import LogoutView
-from django.contrib.auth import views as auth_views
-from usuarios.views import CambioDePass
-from django.urls import reverse_lazy
+from django.urls import path                                               # Función para definir rutas URL
+from . import views                                                        # Importa las vistas del módulo actual
+from django.contrib.auth import views as auth_views                        # Vistas de autenticación integradas de Django
+from .views import CambioDePass                                            # Vista de cambio de contraseña personalizada
 
-app_name = 'usuarios'
+app_name = 'usuarios'                                                      # Namespace de la app para usar en reverse/redirect
 
 urlpatterns = [
-    path('iniciar-sesion/', views.iniciar_sesion, name='iniciar_sesion'),
-    path('cerrar-sesion/', LogoutView.as_view(template_name='usuarios/cerrar_sesion.html'), name='cerrar_sesion'),  
-    path('registro/', views.registrarse, name='registro'),    
-    path('perfil/', views.perfil, name='perfil'), 
-    path('perfil/actualizar', views.actualizar_perfil, name='actualizar_perfil'), 
-    path('perfil/eliminar-avatar/', views.eliminar_avatar, name='eliminar_avatar'),
-    path('perfil/actualizar/password/', CambioDePass.as_view(), name='actualizar_password'),
-    path('buscar/', views.buscar_usuarios, name='buscar_usuarios'),
-    path('privacidad/', views.toggle_privacidad, name='toggle_privacidad'),  # 👈 antes de <str:username>
 
-    path('password-reset/',
+    # ---------------- AUTENTICACIÓN ----------------
+    path('iniciar-sesion/', views.iniciar_sesion, name='iniciar_sesion'),  # Login del usuario
+    path(
+        'cerrar-sesion/',                                                  # URL para cerrar sesión
+        auth_views.LogoutView.as_view(template_name='usuarios/cerrar_sesion.html'),  # Vista de logout con template propio
+        name='cerrar_sesion'                                               # Nombre de la ruta
+    ),
+    path('registro/', views.registrarse, name='registro'),                 # Registro de nuevo usuario
+
+
+    # ---------------- RECUPERACIÓN DE CONTRASEÑA ----------------
+    path(
+        'password-reset/',                                                 # URL para solicitar reseteo de contraseña
         auth_views.PasswordResetView.as_view(
-            template_name='usuarios/password_reset.html',
-            email_template_name='usuarios/password_reset_email.html',
-            success_url=reverse_lazy('usuarios:password_reset_done')
+            template_name='usuarios/password_reset_form.html',            # Template del formulario de reset
+            email_template_name='usuarios/password_reset_email.html',     # Template del email que se envía al usuario
+            success_url='/usuarios/password-reset/done/'                  # Redirige aquí tras enviar el email
         ),
-        name='password_reset'),
+        name='password_reset'                                             # Nombre de la ruta
+    ),
+    path(
+        'password-reset/done/',                                            # URL de confirmación de email enviado
+        auth_views.PasswordResetDoneView.as_view(
+            template_name='usuarios/password_reset_done.html'             # Template de pantalla de éxito
+        ),
+        name='password_reset_done'                                        # Nombre de la ruta
+    ),
+    path(
+        'reset/<uidb64>/<token>/',                                         # URL con token único para confirmar el reset
+        auth_views.PasswordResetConfirmView.as_view(
+            template_name='usuarios/password_reset_confirm.html',         # Template del formulario de nueva contraseña
+            success_url='/usuarios/reset/done/'                           # Redirige aquí tras cambiar la contraseña
+        ),
+        name='password_reset_confirm'                                     # Nombre de la ruta
+    ),
+    path(
+        'reset/done/',                                                     # URL final: reset completado con éxito
+        auth_views.PasswordResetCompleteView.as_view(
+            template_name='usuarios/password_reset_complete.html'         # Template de confirmación final
+        ),
+        name='password_reset_complete'                                    # Nombre de la ruta
+    ),
 
-    path('password-reset/done/',
-         auth_views.PasswordResetDoneView.as_view(template_name='usuarios/password_reset_done.html'),
-         name='password_reset_done'),
 
-    path('reset/<uidb64>/<token>/',
-         auth_views.PasswordResetConfirmView.as_view(template_name='usuarios/password_reset_confirm.html'),
-         name='password_reset_confirm'),
-
-    path('reset/done/',
-         auth_views.PasswordResetCompleteView.as_view(template_name='usuarios/password_reset_complete.html'),
-         name='password_reset_complete'),
+    # ---------------- PERFIL ----------------
+    path('perfil/', views.perfil, name='perfil'),                          # Ver perfil propio
+    path('perfil/actualizar/', views.actualizar_perfil, name='actualizar_perfil'),          # Editar datos del perfil
+    path('perfil/actualizar/password/', CambioDePass.as_view(), name='actualizar_password'), # Cambiar contraseña
+    path('perfil/eliminar-avatar/', views.eliminar_avatar, name='eliminar_avatar'),         # Eliminar avatar personalizado
+    path('privacidad/', views.toggle_privacidad, name='toggle_privacidad'),                 # Alternar perfil público/privado
+    path('eliminar-perfil/', views.eliminar_perfil, name='eliminar_perfil'),                # Eliminar cuenta del usuario
 
 
-    path('solicitudes/', views.solicitudes, name='solicitudes'),
-    path('solicitudes/<int:solicitud_id>/aceptar/', views.aceptar_solicitud, name='aceptar_solicitud'),
-    path('solicitudes/<int:solicitud_id>/rechazar/', views.rechazar_solicitud, name='rechazar_solicitud'),
-    path('<str:username>/', views.ver_perfil, name='ver_perfil'),
-    path('<str:username>/viaje/<int:id_viaje>/', views.detalle_viaje_publico, name='detalle_viaje_publico'),
-    path('<str:username>/seguir/', views.seguir, name='seguir'),
-    path('<str:username>/dejar-de-seguir/', views.dejar_de_seguir, name='dejar_de_seguir'),
-    path('<str:username>/seguidores/', views.lista_seguidores, name='lista_seguidores'),
-    path('<str:username>/siguiendo/', views.lista_siguiendo, name='lista_siguiendo'),
+    # ---------------- GENERAL ----------------
+    path('about-me/', views.about_me, name='about_me'),                   # Página informativa sobre el sitio
 ]

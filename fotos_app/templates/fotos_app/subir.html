@@ -1,40 +1,40 @@
-{% extends 'base.html' %}
+{% extends 'base.html' %}                                   {# Hereda la estructura base del sitio #}
 
-{% block texto_pestania %}
+{% block texto_pestania %}                                  {# Título de la pestaña del navegador #}
     Subir Fotos
 {% endblock %}
 
-{% block header_h1 %}
+{% block header_h1 %}                                       {# Título principal de la página #}
     SUBIR FOTOS
 {% endblock %}
 
-{% block contenido %}
+{% block contenido %}                                       {# Contenido principal #}
 
-<div class="container mt-5" style="max-width: 600px;">
+<div class="container mt-5" style="max-width: 600px;">      {# Contenedor centrado con ancho limitado #}
 
-    <div class="card shadow-sm p-4">
+    <div class="card shadow-sm p-4">                        {# Tarjeta visual con padding y sombra #}
 
-        <h4 class="mb-3 text-center">Selecciona las imágenes</h4>
+        <h4 class="mb-3 text-center">Selecciona las imágenes</h4>   {# Título dentro de la card #}
 
-        <form method="post" enctype="multipart/form-data">
-            {% csrf_token %}
+        <form method="post" enctype="multipart/form-data">  {# Formulario POST necesario para subir archivos #}
+            {% csrf_token %}                                {# Token de seguridad obligatorio en Django #}
 
-            <div class="mb-3">
-                <label class="form-label">Imágenes</label>
-                <input type="file" name="imagen" multiple class="form-control">
-                <div class="form-text">
+            <div class="mb-3">                              {# Contenedor del input de archivos #}
+                <label class="form-label">Imágenes</label>  {# Etiqueta del campo #}
+                <input type="file" name="imagen" multiple class="form-control">  {# Input que permite múltiples archivos #}
+                <div class="form-text">                    {# Texto de ayuda debajo del input #}
                     Puedes seleccionar varias fotos a la vez.
                 </div>
             </div>
 
-            <button type="submit" class="btn btn-primary w-100 mb-2">
+            <button type="submit" class="btn btn-primary w-100 mb-2">  {# Botón para enviar el formulario #}
                 Subir fotos
             </button>
 
         </form>
 
         <!-- 🔙 Botón volver -->
-        <a href="{% url 'viajes_app:detalle_viaje' viaje.id %}" class="btn btn-outline-secondary w-100">
+        <a href="{% url 'viajes_app:detalle_viaje' viaje.id %}" class="btn btn-outline-secondary w-100">  {# Link para regresar al detalle del viaje #}
             Volver al detalle del viaje
         </a>
 

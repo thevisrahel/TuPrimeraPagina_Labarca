@@ -10,85 +10,99 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
-from pathlib import Path
+from pathlib import Path                                                                    # Para manejar rutas de carpetas de forma segura
+from dotenv import load_dotenv                                                              # Para leer variables del archivo .env
 import os
 
-BASE_DIR = Path(__file__).resolve().parent.parent
+load_dotenv()                                                                               # Carga las variables secretas desde el archivo .env
 
-SECRET_KEY = 'django-insecure-e2v1q6tlsv1_qgzu&w@k!choewt@js8ul*gj5!73xd0w&m2672'
 
-DEBUG = True
+BASE_DIR = Path(__file__).resolve().parent.parent                                           # Ruta base del proyecto. Todo se calcula a partir de aquí.
 
-ALLOWED_HOSTS = []
 
-INSTALLED_APPS = [
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'viajes_app',
-    'fotos_app',
-    'usuarios',
-    'comentarios',
+DEBUG = True                                                                                # True = modo desarrollo (muestra errores detallados). False = modo producción (oculta errores al usuario)
+
+
+ALLOWED_HOSTS = []                                                                          # Lista de dominios que pueden acceder al proyecto
+
+INSTALLED_APPS = [                                                                          # Apps propias de Django
+    'django.contrib.admin',                                                                 # Panel de administración
+    'django.contrib.auth',                                                                  # Sistema de usuarios y login
+    'django.contrib.contenttypes',                                                          # Relaciones genéricas entre modelos
+    'django.contrib.sessions',                                                              # Manejo de sesiones de usuario
+    'django.contrib.messages',                                                              # Mensajes flash (ej: "guardado con éxito")
+    'django.contrib.staticfiles',                                                           # Manejo de archivos CSS, JS, imágenes
+    'viajes_app',                                                                           # App del proyecto
+    'fotos_app',                                                                            # App del proyecto
+    'usuarios',                                                                             # App del proyecto
+    'comentarios',                                                                          # App del proyecto
+    'social',
 ]
 
-MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+MIDDLEWARE = [                                                                              # Capas que procesan cada petición ANTES y DESPUÉS de llegar a tu código. El orden importa: se ejecutan de arriba a abajo en la petición, y de abajo a arriba en la respuesta.
+    'django.middleware.security.SecurityMiddleware',                                        # Protecciones de seguridad (HTTPS, etc.)
+    'django.contrib.sessions.middleware.SessionMiddleware',                                 # Activa el sistema de sesiones
+    'django.middleware.common.CommonMiddleware',                                            # Normaliza URLs (ej: agrega slash final)
+    'django.middleware.csrf.CsrfViewMiddleware',                                            # Protege formularios contra ataques CSRF
+    'django.contrib.auth.middleware.AuthenticationMiddleware',                              # Adjunta el usuario actual a cada petición
+    'django.contrib.messages.middleware.MessageMiddleware',                                 # Activa los mensajes flash
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',                               # Evita que tu web se incruste en iframes
 ]
 
-ROOT_URLCONF = 'viajes_proyecto.urls'
+ROOT_URLCONF = 'viajes_proyecto.urls'                                                       #Le dice a Django cuál es el archivo urls.py principal del proyecto
 
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],
-        'APP_DIRS': True,
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',                       # Motor de plantillas de Django
+        'DIRS': [BASE_DIR / 'templates'],                                                   # Carpeta global de templates (fuera de las apps)
+        'APP_DIRS': True,                                                                   # También busca templates dentro de cada app en /templates/
         'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
-                'usuarios.context_processors.solicitudes_pendientes',  # 👈
+            'context_processors': [                                                         # Inyectan variables automáticamente en todos los templates
+                'django.template.context_processors.request',                               # Disponibiliza el objeto 'request'
+                'django.contrib.auth.context_processors.auth',                              # Disponibiliza el usuario actual
+                'django.contrib.messages.context_processors.messages',                      # Disponibiliza los mensajes flash
+                'social.context_processors.notificaciones_globales',                         # Custom: inyecta solicitudes pendientes en todos los templates
             ],
         },
     },
 ]
 
-WSGI_APPLICATION = 'viajes_proyecto.wsgi.application'
+WSGI_APPLICATION = 'viajes_proyecto.wsgi.application'                                       # Punto de entrada para servidores web en producción
 
-DATABASES = {
+DATABASES = {                                                                               
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.sqlite3',                                             # Motor de base de datos (SQLite para desarrollo)
+        'NAME': BASE_DIR / 'db.sqlite3',                                                    # Archivo donde se guarda la BD (en la raíz del proyecto)
     }
 }
 
-AUTH_PASSWORD_VALIDATORS = [
-    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
-    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
-    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
-    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
+AUTH_PASSWORD_VALIDATORS = [                                                                # Reglas que debe cumplir una contraseña al registrarse
+    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},   # No puede parecerse al nombre de usuario   
+    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},             # Mínimo 8 caracteres
+    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},            # No puede ser una contraseña común (ej: "123456")
+    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},           # No puede ser solo números
 ]
 
-LANGUAGE_CODE = 'en-us'
-TIME_ZONE = 'UTC'
-USE_I18N = True
-USE_TZ = True
+LANGUAGE_CODE = 'es'                                                                        # Idioma del panel admin y mensajes de Django
+TIME_ZONE = 'America/Lima'                                                                  # Zona horaria (podrías cambiarlo a 'America/Lima')
+USE_I18N = True                                                                             # Activa el sistema de traducción de Django
+USE_TZ = True                                                                               # Guarda fechas con zona horaria en la BD
 
-STATIC_URL = 'static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_URL = 'static/'                                                                      # URL pública para acceder a estáticos
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')                                         # Carpeta donde se reúnen todos los estáticos
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_URL = '/media/'                                                                       # URL pública: http://localhost:8000/media/foto.jpg
+MEDIA_ROOT = BASE_DIR / 'media'                                                             # Carpeta física donde se guardan los archivos subidos
 
-LOGIN_URL = "/usuarios/iniciar-sesion/"
+LOGIN_URL = "/usuarios/iniciar-sesion/"                                                     # Si un usuario no logueado intenta entrar a una vista protegida, Django lo redirige a esta URL
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'                               # Usa SMTP real para enviar correos
+EMAIL_HOST = 'smtp.gmail.com'                                                               # Servidor de Gmail
+EMAIL_PORT = 587                                                                            # Puerto estándar para TLS
+EMAIL_USE_TLS = True                                                                        # Encripta la conexión con el servidor de correo
+
+
+SECRET_KEY = os.getenv('SECRET_KEY')                                                        # Clave secreta para encriptar sesiones, tokens, etc.
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')                                              # Tu correo de Gmail
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')                                      # Contraseña de aplicación de Gmail
+DEFAULT_FROM_EMAIL = os.getenv('EMAIL_HOST_USER')                                           # Correo que aparece como remitente

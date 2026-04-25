@@ -1,25 +1,86 @@
-{% extends 'base.html' %}
+{% extends 'base.html' %}                                                   {# Hereda la estructura base del sitio (navbar, footer, etc.) #}
 
-{% block texto_pestania  %}
+{% block texto_pestania %}                                                   {# Bloque para el título de la pestaña del navegador #}
     Actualizar viaje
-{% endblock  %}
+{% endblock %}
 
-{% block header_h1%}
+{% block header_h1 %}                                                        {# Bloque para el título del header de la página #}
     ACTUALIZAR VIAJE
 {% endblock %}
 
-{% block contenido %}
+{% block contenido %}                                                        {# Bloque principal donde va el contenido de la página #}
 
-<form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
+<div class="container mt-5" style="max-width: 720px;">                      {# Contenedor centrado con ancho máximo de 720px #}
 
-    {{ formulario.as_p }}
+    <div class="card border-0 shadow-lg rounded-4">                         {# Tarjeta con sombra y bordes redondeados #}
 
-    <input type="submit" value="Actualizar">
-</form>
+        {# HEADER DE LA TARJETA #}
+        <div class="card-header bg-white border-0 text-center py-4">        {# Cabecera de la tarjeta sin borde y centrada #}
+            <h5 class="mb-0 fw-bold">Edita tu viaje</h5>
+            <small class="text-muted">Actualiza la información de tu experiencia</small>
+        </div>
 
-{% if mensaje %}
-    <p>{{ mensaje }}</p>
-{% endif %}
+        <div class="card-body px-4 py-4">                                   {# Cuerpo de la tarjeta con padding #}
+
+            {# ERRORES GENERALES DEL FORMULARIO #}
+            {% if formulario.errors %}                                       {# Si hay errores de validación los muestra arriba del formulario #}
+                <div class="alert alert-danger rounded-3">
+                    {{ formulario.errors }}
+                </div>
+            {% endif %}
+
+            <form method="post" enctype="multipart/form-data">              {# enctype necesario para poder subir imágenes #}
+                {% csrf_token %}                                             {# Token de seguridad obligatorio en todo form POST de Django #}
+
+                {% for field in formulario %}                                {# Recorre todos los campos del formulario automáticamente #}
+                    <div class="mb-4">
+
+                        {# LABEL DEL CAMPO #}
+                        <label class="form-label fw-semibold d-block">
+                            {{ field.label }}                                {# Nombre del campo (ej: Región, País, Fecha) #}
+                            {% if field.field.required %}                    {# Si el campo es obligatorio muestra un asterisco rojo #}
+                                <span class="text-danger">*</span>
+                            {% endif %}
+                        </label>
+
+                        {# INPUT DEL CAMPO #}
+                        <div>
+                            {{ field }}                                      {# Renderiza el input del campo con sus estilos y valor actual #}
+                        </div>
+
+                        {# CAMPO OPCIONAL #}
+                        {% if not field.field.required %}                    {# Si el campo no es obligatorio muestra (opcional) automáticamente #}
+                            <small class="text-muted d-block">(opcional)</small>
+                        {% endif %}
+
+                        {# ERRORES DE VALIDACIÓN #}
+                        {% if field.errors %}                                {# Si el campo tiene errores los muestra en rojo #}
+                            <div class="text-danger small mt-1">
+                                {{ field.errors|striptags }}                 {# striptags elimina las etiquetas HTML de los mensajes de error #}
+                            </div>
+                        {% endif %}
+
+                    </div>
+                {% endfor %}                                                 {# Fin del loop de campos #}
+
+                {# BOTÓN DE ENVÍO #}
+                <div class="d-grid mt-4">                                    {# d-grid hace que el botón ocupe todo el ancho #}
+                    <button type="submit" class="btn btn-primary btn-lg rounded-3 shadow-sm">
+                        Guardar cambios
+                    </button>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
+    {% if mensaje %}                                                         {# Muestra el mensaje de éxito solo si la vista lo envía #}
+        <div class="alert alert-success mt-4 text-center rounded-3">
+            {{ mensaje }}
+        </div>
+    {% endif %}
+
+</div>
 
 {% endblock %}

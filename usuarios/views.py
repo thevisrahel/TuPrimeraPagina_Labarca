@@ -1,259 +1,94 @@
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth import login
-from usuarios.forms import CreacionUsuario, ActualizarUsuario
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.views import PasswordChangeView
-from .forms import CambiarPassword, LoginForm
-from django.contrib.auth.models import User
-from .models import InfoExtra, Seguimiento, SolicitudSeguimiento
-from viajes_app.models import Viaje, Like
+from django.shortcuts import render, redirect                              # Funciones para renderizar templates y redirigir
+from django.contrib.auth import login                                      # Función para iniciar sesión de un usuario
+from usuarios.forms import CreacionUsuario, ActualizarUsuario              # Formularios personalizados de usuario
+from django.contrib.auth.decorators import login_required                  # Decorador que exige autenticación
+from django.contrib.auth.views import PasswordChangeView                   # Vista base para cambio de contraseña
+from .forms import CambiarPassword, LoginForm                              # Formularios locales de login y cambio de pass
+from django.urls import reverse_lazy                                       # URL diferida para usar en clases
 
-def iniciar_sesion(request):
 
-    if request.method == "POST":
-        formulario = LoginForm(request, data=request.POST)
-
-        if formulario.is_valid():
-            user = formulario.get_user()
-            login(request, user)
-            return redirect("viajes_app:inicio")
-
-    else:
-        formulario = LoginForm()
-
-    return render(request, 'usuarios/iniciar_sesion.html', {
-        'formulario_iniciar_sesion': formulario
-    })
-    
-def registrarse(request):
-    
-    if request.method == "POST":
-        formulario = CreacionUsuario(request.POST)
-        if formulario.is_valid():
-            formulario.save()
-            return redirect("usuarios:iniciar_sesion")
-    else:
-        formulario = CreacionUsuario()
-        
-    return render(request, 'usuarios/registro.html', {'formulario_registro': formulario})
-
-@login_required
-def perfil(request):
-    seguidores = request.user.seguidores.count()
-    siguiendo = request.user.siguiendo.count()
-    return render(request, 'usuarios/perfil.html', {
-        'seguidores': seguidores,
-        'siguiendo': siguiendo,
+def iniciar_sesion(request):                                               # Vista para iniciar sesión
+    if request.method == "POST":                                           # Si el formulario fue enviado
+        formulario = LoginForm(request, data=request.POST)                 # Instancia el formulario con los datos POST
+        if formulario.is_valid():                                          # Valida credenciales
+            user = formulario.get_user()                                   # Obtiene el usuario autenticado
+            login(request, user)                                           # Inicia la sesión en Django
+            return redirect("viajes_app:inicio")                           # Redirige al inicio
+    else:                                                                  # Si es GET
+        formulario = LoginForm()                                           # Formulario vacío
+    return render(request, 'usuarios/iniciar_sesion.html', {               # Renderiza el template
+        'formulario_iniciar_sesion': formulario                            # Pasa el formulario al contexto
     })
 
-@login_required
-def actualizar_perfil(request):
-    if request.method == "POST":
-        print("=== DEBUG ===")
-        print("FILES:", request.FILES)
-        print("POST:", request.POST)
-        
-        formulario = ActualizarUsuario(
-            request.POST,
-            request.FILES, 
-            instance=request.user
+def registrarse(request):                                                  # Vista para registrar un nuevo usuario
+    if request.method == "POST":                                           # Si el formulario fue enviado
+        formulario = CreacionUsuario(request.POST)                         # Instancia con datos del POST
+        if formulario.is_valid():                                          # Si los datos son válidos
+            formulario.save()                                              # Guarda el nuevo usuario en la BD
+            return redirect("usuarios:iniciar_sesion")                     # Redirige al login
+    else:                                                                  # Si es GET
+        formulario = CreacionUsuario()                                     # Formulario vacío
+    return render(request, 'usuarios/registro.html', {                     # Renderiza el template de registro
+        'formulario_registro': formulario                                  # Pasa el formulario al contexto
+    })
+
+@login_required                                                            # Solo usuarios autenticados pueden acceder
+def perfil(request):                                                       # Vista del perfil del usuario actual
+    seguidores = request.user.seguidores.count()                           # Cuenta los seguidores del usuario
+    siguiendo = request.user.siguiendo.count()                             # Cuenta a quiénes sigue el usuario
+    return render(request, 'usuarios/perfil.html', {                       # Renderiza el template del perfil
+        'seguidores': seguidores,                                          # Envía el conteo de seguidores
+        'siguiendo': siguiendo,                                            # Envía el conteo de siguiendo
+    })
+
+@login_required                                                            # Requiere autenticación
+def actualizar_perfil(request):                                            # Vista para editar datos del perfil
+    if request.method == "POST":                                           # Si se envió el formulario
+        formulario = ActualizarUsuario(                                    # Instancia el formulario con:
+            request.POST,                                                  # Datos del formulario
+            request.FILES,                                                 # Archivos subidos (ej. avatar)
+            instance=request.user                                          # Usuario actual a modificar
         )
-        
-        print("Form valid:", formulario.is_valid())
-        print("Form errors:", formulario.errors)
-        
-        if formulario.is_valid():
-            print("cleaned avatar:", formulario.cleaned_data.get("avatar"))
-            formulario.save()
-            return redirect('usuarios:perfil')
-    else:
-        formulario = ActualizarUsuario(instance=request.user)
-
-    return render(request, 'usuarios/actualizar_perfil.html', {
-        'formulario': formulario
-    })
-    
-@login_required
-def eliminar_avatar(request):
-    if request.method == "POST":
-        info = request.user.info
-        if info.avatar:
-            info.avatar.delete()
-            info.save()
-    return redirect('usuarios:perfil')
-
-from django.urls import reverse_lazy
-from django.contrib.auth.views import PasswordChangeView
-
-
-class CambioDePass(PasswordChangeView):
-    template_name = 'usuarios/cambio_pass.html'
-    form_class = CambiarPassword
-    success_url = reverse_lazy('usuarios:perfil')
-    
-    
-
-def buscar_usuarios(request):
-    query = request.GET.get('q')
-    resultados = []
-
-    if query:
-        resultados = User.objects.filter(username__icontains=query)
-
-        # opcional: excluirte a ti mismo
-        if request.user.is_authenticated:
-            resultados = resultados.exclude(id=request.user.id)
-
-    return render(request, 'usuarios/buscar_usuarios.html', {
-        'resultados': resultados,
-        'query': query
-    })
-    
-
-def ver_perfil(request, username):
-    usuario = get_object_or_404(User, username=username)
-    InfoExtra.objects.get_or_create(user=usuario) 
-    viajes = []
-    es_seguidor = False
-    es_privado = usuario.info.es_privado
-
-    if request.user.is_authenticated:
-        es_seguidor = Seguimiento.objects.filter(
-            seguidor=request.user, seguido=usuario
-        ).exists()
-
-    if not es_privado or es_seguidor or request.user == usuario:
-        viajes = usuario.viajes.order_by('-fecha')
-
-
-    seguidores = usuario.seguidores.count()
-    siguiendo = usuario.siguiendo.count()
-
-    solicitud_pendiente = SolicitudSeguimiento.objects.filter(
-        solicitante=request.user,
-        destinatario=usuario,
-        estado='pendiente'
-        
-    ).exists() if request.user.is_authenticated else False
-
-    return render(request, 'usuarios/ver_perfil.html', {
-        'usuario': usuario,
-        'viajes': viajes,
-        'es_seguidor': es_seguidor,
-        'es_privado': es_privado,
-        'seguidores': seguidores,
-        'siguiendo': siguiendo,
-        'solicitud_pendiente': solicitud_pendiente,
-    })
-    
-@login_required
-def seguir(request, username):
-    usuario_a_seguir = get_object_or_404(User, username=username)
-    if request.user == usuario_a_seguir:
-        return redirect('usuarios:ver_perfil', username=username)
-
-    SolicitudSeguimiento.objects.get_or_create(
-        solicitante=request.user,
-        destinatario=usuario_a_seguir
-    )
-
-    return redirect('usuarios:ver_perfil', username=username)
-
-@login_required
-def dejar_de_seguir(request, username):
-    usuario_a_dejar = get_object_or_404(User, username=username)
-    Seguimiento.objects.filter(seguidor=request.user, seguido=usuario_a_dejar).delete()
-    # También cancelar solicitud pendiente si existiera
-    SolicitudSeguimiento.objects.filter(solicitante=request.user, destinatario=usuario_a_dejar).delete()
-    return redirect('usuarios:ver_perfil', username=username)
-
-@login_required
-def solicitudes(request):
-    solicitudes_pendientes = request.user.solicitudes_recibidas.filter(estado='pendiente')
-    return render(request, 'usuarios/solicitudes.html', {
-        'solicitudes': solicitudes_pendientes
+        if formulario.is_valid():                                          # Si los datos son válidos
+            formulario.save()                                              # Guarda los cambios en la BD
+            return redirect('usuarios:perfil')                             # Redirige al perfil
+    else:                                                                  # Si es GET
+        formulario = ActualizarUsuario(instance=request.user)              # Formulario pre-cargado con datos actuales
+    return render(request, 'usuarios/actualizar_perfil.html', {            # Renderiza el template
+        'formulario': formulario                                           # Pasa el formulario al contexto
     })
 
-@login_required
-def aceptar_solicitud(request, solicitud_id):
-    solicitud = get_object_or_404(SolicitudSeguimiento, id=solicitud_id, destinatario=request.user)
-    solicitud.estado = 'aceptada'
-    solicitud.save()
-    Seguimiento.objects.get_or_create(seguidor=solicitud.solicitante, seguido=request.user)
-    return redirect('usuarios:solicitudes')
+@login_required                                                            # Requiere autenticación
+def eliminar_avatar(request):                                              # Vista para eliminar el avatar del usuario
+    if request.method == "POST":                                           # Solo acepta POST
+        info = request.user.info                                           # Obtiene el perfil extendido del usuario
+        if info.avatar and info.avatar.name != 'avatars/default.png':     # Si tiene avatar personalizado
+            import os                                                      # Importa módulo del sistema operativo
+            if os.path.isfile(info.avatar.path):                          # Verifica que el archivo existe
+                os.remove(info.avatar.path)                               # Borra el archivo del disco
+        info.avatar = 'avatars/default.png'                               # Restaura el avatar por defecto
+        info.save()                                                        # Guarda los cambios en la BD
+    return redirect('usuarios:perfil')                                     # Redirige al perfil
 
-@login_required
-def rechazar_solicitud(request, solicitud_id):
-    solicitud = get_object_or_404(SolicitudSeguimiento, id=solicitud_id, destinatario=request.user)
-    solicitud.delete()
-    return redirect('usuarios:solicitudes')
+class CambioDePass(PasswordChangeView):                                    # Vista basada en clase para cambiar contraseña
+    template_name = 'usuarios/cambio_pass.html'                           # Template a usar
+    form_class = CambiarPassword                                           # Formulario personalizado
+    success_url = reverse_lazy('usuarios:perfil')                         # URL a la que redirige al tener éxito
 
-@login_required
-def toggle_privacidad(request):
-    if request.method == 'POST':
-        info = request.user.info
-        info.es_privado = not info.es_privado
-        info.save()
-    return redirect('usuarios:perfil')
+@login_required                                                            # Requiere autenticación
+def toggle_privacidad(request):                                            # Vista para alternar perfil público/privado
+    if request.method == 'POST':                                           # Solo acepta POST
+        info = request.user.info                                           # Obtiene el perfil extendido
+        info.es_privado = not info.es_privado                             # Invierte el estado de privacidad
+        info.save()                                                        # Guarda el cambio en la BD
+    return redirect('usuarios:perfil')                                     # Redirige al perfil
 
+@login_required                                                            # Requiere autenticación
+def eliminar_perfil(request):                                              # Vista para eliminar la cuenta del usuario
+    if request.method == 'POST':                                           # Si confirma la eliminación
+        request.user.delete()                                              # Borra el usuario de la BD
+        return redirect('usuarios:iniciar_sesion')                         # Redirige al login
+    return render(request, 'usuarios/eliminar_perfil.html')                # Si es GET, muestra pantalla de confirmación
 
-def detalle_viaje_publico(request, username, id_viaje):
-    usuario = get_object_or_404(User, username=username)
-    viaje = get_object_or_404(Viaje, id=id_viaje, propietario=usuario)
-
-    es_privado = usuario.info.es_privado
-    es_seguidor = Seguimiento.objects.filter(
-        seguidor=request.user,
-        seguido=usuario
-    ).exists() if request.user.is_authenticated else False
-
-    if es_privado and not es_seguidor and request.user != usuario:
-        return redirect('usuarios:ver_perfil', username=username)
-
-    # 🔥 AQUI ESTÁ LO QUE TE FALTABA
-    usuario_dio_like = False
-    if request.user.is_authenticated:
-        usuario_dio_like = viaje.likes.filter(id=request.user.id).exists()
-
-    return render(request, 'usuarios/detalle_viaje_publico.html', {
-        'usuario': usuario,
-        'viaje': viaje,
-        'usuario_dio_like': usuario_dio_like,  # 👈 IMPORTANTE
-    })
-    
-def lista_seguidores(request, username):
-    usuario = get_object_or_404(User, username=username)
-    
-    es_privado = usuario.info.es_privado
-    es_seguidor = Seguimiento.objects.filter(
-        seguidor=request.user, seguido=usuario
-    ).exists() if request.user.is_authenticated else False
-
-    if es_privado and not es_seguidor and request.user != usuario:
-        return redirect('usuarios:ver_perfil', username=username)
-
-    seguidores = User.objects.filter(siguiendo__seguido=usuario)
-    return render(request, 'usuarios/lista_seguidores.html', {
-        'usuario': usuario,
-        'usuarios': seguidores,
-        'titulo': f'Seguidores de {usuario.username}'
-    })
-
-
-def lista_siguiendo(request, username):
-    usuario = get_object_or_404(User, username=username)
-
-    es_privado = usuario.info.es_privado
-    es_seguidor = Seguimiento.objects.filter(
-        seguidor=request.user, seguido=usuario
-    ).exists() if request.user.is_authenticated else False
-
-    if es_privado and not es_seguidor and request.user != usuario:
-        return redirect('usuarios:ver_perfil', username=username)
-
-    siguiendo = User.objects.filter(seguidores__seguidor=usuario)
-    return render(request, 'usuarios/lista_seguidores.html', {
-        'usuario': usuario,
-        'usuarios': siguiendo,
-        'titulo': f'{usuario.username} sigue a'
-    })
+def about_me(request):                                                     # Vista pública de información del sitio
+    return render(request, 'usuarios/about_me.html')                       # Renderiza el template about me

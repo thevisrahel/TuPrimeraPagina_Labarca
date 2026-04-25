@@ -1,6 +1,4 @@
-from django.contrib import admin
-from .models import InfoExtra, Seguimiento, SolicitudSeguimiento
+from django.contrib import admin                                           # Módulo de administración de Django
+from .models import InfoExtra                                              # Importa el modelo InfoExtra del módulo actual
 
-admin.site.register(InfoExtra)
-admin.site.register(Seguimiento)
-admin.site.register(SolicitudSeguimiento)
+admin.site.register(InfoExtra)                                             # Registra InfoExtra para gestionarlo desde el panel admin

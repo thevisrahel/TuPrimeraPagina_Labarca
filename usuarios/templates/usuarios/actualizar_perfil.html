@@ -1,19 +1,32 @@
-{% extends 'base.html' %}
+{% extends 'base.html' %}                                                  {# Hereda la estructura del template base #}
 
-{% block texto_pestania  %}
-    Actualizar Perfil
-{% endblock  %}
-
-{% block header_h1%}
-    ACTUALIZAR PERFIL
+{% block texto_pestania %}                                                 {# Bloque para el título de la pestaña #}
+Actualizar Perfil
 {% endblock %}
 
-{% block contenido %}
+{% block header_h1 %}                                                      {# Bloque para el título principal de la página #}
+ACTUALIZAR PERFIL
+{% endblock %}
 
-<form action="{% url "usuarios:actualizar_perfil" %}" method="post" enctype="multipart/form-data"> 
-    {% csrf_token %}
-    {{ formulario.as_p }}
-    <input type="submit" value="Actualizar Perfil" >
-</form>
+{% block contenido %}                                                      {# Bloque principal de contenido #}
+
+<div class="container mt-5" style="max-width: 650px;">                    {# Contenedor con ancho máximo limitado #}
+
+    <div class="card shadow-sm border-0 p-4">                             {# Tarjeta con sombra, sin borde y padding #}
+
+        <form action="{% url 'usuarios:actualizar_perfil' %}" method="post" enctype="multipart/form-data"> {# Formulario POST que permite subir archivos #}
+            {% csrf_token %}                                               {# Token de seguridad obligatorio #}
+
+            {{ formulario.as_p }}                                          {# Renderiza todos los campos del formulario en párrafos #}
+
+            <div class="d-grid mt-3">                                      {# Contenedor en grid con margen superior #}
+                <input type="submit" value="Actualizar Perfil" class="btn btn-primary"> {# Botón de envío a ancho completo #}
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
 
 {% endblock %}

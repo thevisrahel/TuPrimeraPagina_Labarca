@@ -1,0 +1,45 @@
+{% extends 'base.html' %}                                                  {# Hereda la estructura del template base #}
+
+{% block texto_pestania %}                                                 {# Bloque para el título de la pestaña #}
+Eliminar perfil
+{% endblock %}
+
+{% block header_h1 %}                                                      {# Bloque para el título principal de la página #}
+ELIMINAR PERFIL
+{% endblock %}
+
+{% block contenido %}                                                      {# Bloque principal de contenido #}
+
+<div class="container mt-5 d-flex justify-content-center">                {# Contenedor centrado con margen superior #}
+    <div class="card shadow-sm text-center border-danger" style="max-width: 500px; width: 100%;"> {# Tarjeta con borde rojo de advertencia #}
+
+        <div class="card-body p-4">                                        {# Cuerpo de la tarjeta con padding #}
+
+            <div style="font-size: 55px;">⚠️</div>                         {# Emoji de advertencia como ícono decorativo #}
+
+            <h4 class="text-danger mt-3">                                  {# Título en rojo de advertencia #}
+                ¿Estás seguro?
+            </h4>
+
+            <p class="text-muted">                                         {# Mensaje explicando las consecuencias #}
+                Esta acción eliminará tu cuenta de forma permanente y no se puede deshacer.
+            </p>
+
+            <form method="post">                                           {# Formulario de confirmación enviado por POST #}
+                {% csrf_token %}                                           {# Token de seguridad obligatorio #}
+
+                <button type="submit" class="btn btn-danger w-100 mb-2">  {# Botón rojo para confirmar la eliminación #}
+                    Sí, eliminar mi perfil
+                </button>
+
+                <a href="{% url 'usuarios:perfil' %}" class="btn btn-secondary w-100"> {# Link para cancelar y volver al perfil #}
+                    Cancelar
+                </a>
+            </form>
+
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

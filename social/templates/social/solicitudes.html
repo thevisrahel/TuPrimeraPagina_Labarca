@@ -1,0 +1,124 @@
+{% extends 'base.html' %}                                                  {# Hereda la estructura del template base #}
+
+{% block texto_pestania %}                                                 {# Bloque para el título de la pestaña #}
+    Notificaciones
+{% endblock %}
+
+{% block header_h1 %}                                                      {# Bloque para el título principal de la página #}
+    NOTIFICACIONES
+{% endblock %}
+
+{% block contenido %}                                                      {# Bloque principal de contenido #}
+
+<div class="container mt-4" style="max-width: 700px;">                    {# Contenedor con ancho máximo limitado #}
+
+    {# ── SOLICITUDES DE SEGUIMIENTO ── #}
+    <h5 class="mb-3">👥 Solicitudes de seguimiento</h5>                   {# Título de la sección de solicitudes #}
+
+    {% if solicitudes %}                                                   {# Si hay solicitudes pendientes #}
+        {% for solicitud in solicitudes %}                                 {# Itera sobre cada solicitud #}
+            <div class="d-flex align-items-center justify-content-between border rounded p-3 mb-3"> {# Fila de solicitud #}
+
+                <div class="d-flex align-items-center gap-3">             {# Contenedor avatar + nombre #}
+                    {% if solicitud.solicitante.info.avatar %}             {# Si el solicitante tiene avatar #}
+                        <img src="{{ solicitud.solicitante.info.avatar.url }}"
+                             class="rounded-circle"
+                             width="50" height="50"
+                             style="object-fit:cover;">                    {# Avatar circular del solicitante #}
+                    {% else %}                                             {# Si no tiene avatar #}
+                        <div class="bg-secondary rounded-circle"
+                             style="width:50px;height:50px;"></div>        {# Círculo gris como placeholder #}
+                    {% endif %}
+                    <strong>{{ solicitud.solicitante.username }}</strong>  {# Nombre del solicitante #}
+                </div>
+
+                <div class="d-flex gap-2">                                 {# Contenedor de botones de acción #}
+                    <form action="{% url 'social:aceptar_solicitud' solicitud.id %}" method="post">
+                        {% csrf_token %}                                    {# Token de seguridad #}
+                        <button class="btn btn-success btn-sm">Aceptar</button> {# Botón para aceptar la solicitud #}
+                    </form>
+                    <form action="{% url 'social:rechazar_solicitud' solicitud.id %}" method="post">
+                        {% csrf_token %}                                    {# Token de seguridad #}
+                        <button class="btn btn-danger btn-sm">Rechazar</button> {# Botón para rechazar la solicitud #}
+                    </form>
+                </div>
+
+            </div>
+        {% endfor %}
+
+    {% else %}                                                             {# Si no hay solicitudes pendientes #}
+        <p class="text-muted">No tenés solicitudes pendientes.</p>
+    {% endif %}
+
+    <hr class="my-4">                                                      {# Separador entre secciones #}
+
+    {# ── NOTIFICACIONES DE COMENTARIOS ── #}
+    <h5 class="mb-3">💬 Comentarios recientes</h5>                        {# Título de la sección de notificaciones #}
+
+    {% if notificaciones %}                                                {# Si hay notificaciones #}
+        {% for notif in notificaciones %}                                  {# Itera sobre cada notificación #}
+            <div class="d-flex align-items-start gap-3 border rounded p-3 mb-3
+                        {% if not notif.leida %}border-primary bg-light{% endif %}"> {# Resalta las no leídas con borde azul #}
+
+                {# Avatar del remitente #}
+                {% if notif.remitente.info.avatar %}                       {# Si el remitente tiene avatar #}
+                    <img src="{{ notif.remitente.info.avatar.url }}"
+                         class="rounded-circle"
+                         width="45" height="45"
+                         style="object-fit:cover; flex-shrink:0;">         {# Avatar circular del remitente #}
+                {% else %}                                                 {# Si no tiene avatar #}
+                    <div class="bg-secondary rounded-circle"
+                         style="width:45px;height:45px;flex-shrink:0;"></div> {# Círculo gris como placeholder #}
+                {% endif %}
+
+                <div>
+                    {% if notif.tipo == 'comentario' %}                    {# Si es un comentario en tu viaje #}
+                        <p class="mb-1">
+                            <strong>{{ notif.remitente.username }}</strong>
+                            comentó en tu viaje
+                            <strong>{{ notif.comentario.viaje.titulo }}</strong> {# Título del viaje comentado #}
+                        </p>
+                    {% else %}                                             {# Si es una respuesta a tu comentario #}
+                        <p class="mb-1">
+                            <strong>{{ notif.remitente.username }}</strong>
+                            respondió tu comentario en
+                            <strong>{{ notif.comentario.viaje.titulo }}</strong> {# Título del viaje donde respondieron #}
+                        </p>
+                    {% endif %}
+
+                    <small class="text-muted d-block mb-1">
+                        "{{ notif.comentario.texto|truncatechars:60 }}"    {# Preview del texto del comentario #}
+                    </small>
+
+                    <small class="text-muted">
+                        🕒 {{ notif.creada|date:"d/m/Y" }} a las {{ notif.creada|time:"H:i" }} {# Fecha y hora de la notificación #}
+                    </small>
+
+                    <div class="d-flex gap-2 mt-2">                        {# Contenedor de botones de acción #}
+                        <a href="{% url 'social:detalle_viaje_publico' notif.comentario.viaje.propietario.username notif.comentario.viaje.id %}"
+                           class="btn btn-outline-primary btn-sm">
+                            Ver viaje                                      {# Botón para ir al viaje relacionado #}
+                        </a>
+
+                        <form method="post"
+                              action="{% url 'social:eliminar_notificacion' notif.id %}"
+                              onsubmit="return confirm('¿Eliminar esta notificación?');">
+                            {% csrf_token %}                                {# Token de seguridad #}
+                            <button type="submit" class="btn btn-outline-danger btn-sm">
+                                🗑 Eliminar                                 {# Botón para eliminar la notificación #}
+                            </button>
+                        </form>
+                    </div>
+
+                </div>
+
+            </div>
+        {% endfor %}
+
+    {% else %}                                                             {# Si no hay notificaciones #}
+        <p class="text-muted">No tenés notificaciones.</p>
+    {% endif %}
+
+</div>
+
+{% endblock %}
