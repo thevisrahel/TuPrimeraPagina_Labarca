@@ -116,9 +116,6 @@ SECRET_KEY = 'django-insecure-e2v1q6tlsv1_qgzu&w@k!choewt@js8ul*gj5!73xd0w&m2672
 DEFAULT_FROM_EMAIL = 'noreply@tuweb.com'                                                      # Remitente que aparece en el correo
 PASSWORD_RESET_TIMEOUT = 86400                                                                # 24 horas
 SESSION_COOKIE_AGE = 86400                                                                    # Sesión dura 24 horas
-SESSION_SAVE_EVERY_REQUEST = True      
-<<<<<<< HEAD
+SESSION_SAVE_EVERY_REQUEST = True
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-=======
->>>>>>> f70c8e9ef01b2a752143e9cc9ce1e482f08c131e
