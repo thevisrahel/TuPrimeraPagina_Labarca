@@ -20,7 +20,7 @@ load_dotenv()                                                                   
 BASE_DIR = Path(__file__).resolve().parent.parent                                           # Ruta base del proyecto. Todo se calcula a partir de aquí.
 
 
-DEBUG = False                                                                                # True = modo desarrollo (muestra errores detallados). False = modo producción (oculta errores al usuario)
+DEBUG = True                                                                                # True = modo desarrollo (muestra errores detallados). False = modo producción (oculta errores al usuario)
 
 #ALLOWED_HOSTS = ['127.0.0.1', 'localhost']      
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'mi-app-viajes-4u30.onrender.com']               # Lista de dominios que pueden acceder al proyecto
