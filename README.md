@@ -38,8 +38,8 @@ cd viajes_proyecto
 
 # 2. Crear entorno virtual
 python -m venv .venv
-.venv\Scripts\activate        # Windows
-source .venv/bin/activate     # Linux/Mac
+source .venv/Scripts/activate        # Windows
+source .venv/bin/activate            # Linux/Mac
 
 # 3. Instalar dependencias
 pip install -r requirements.txt
