@@ -20,10 +20,10 @@ load_dotenv()                                                                   
 BASE_DIR = Path(__file__).resolve().parent.parent                                           # Ruta base del proyecto. Todo se calcula a partir de aquí.
 
 
-DEBUG = True                                                                                # True = modo desarrollo (muestra errores detallados). False = modo producción (oculta errores al usuario)
+DEBUG = False                                                                                # True = modo desarrollo (muestra errores detallados). False = modo producción (oculta errores al usuario)
 
-
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost']                                                                          # Lista de dominios que pueden acceder al proyecto
+#ALLOWED_HOSTS = ['127.0.0.1', 'localhost']      
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'mi-app-viajes-4u30.onrender.com']               # Lista de dominios que pueden acceder al proyecto
 
 INSTALLED_APPS = [                                                                          # Apps propias de Django
     'django.contrib.admin',                                                                 # Panel de administración
