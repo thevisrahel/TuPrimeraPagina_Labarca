@@ -156,3 +156,8 @@ EMAIL_HOST_PASSWORD = 'tu_app_password'
 
 - [LinkedIn](https://www.linkedin.com/in/elvislabarca/)
 - [GitHub](https://github.com/thevisrahel)
+
+
+## 👤 Video
+
+- [Enlace en Drive](https://drive.google.com/file/d/1wCQJVj6xaF2tTfUCM-IEPAT2zTMAqFEQ/view?usp=sharing)
