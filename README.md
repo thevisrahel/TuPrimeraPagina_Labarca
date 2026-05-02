@@ -33,8 +33,8 @@ viajes_proyecto/
 
 ```bash
 # 1. Clonar el repositorio
-git clone <url-del-repo>
-cd viajes_proyecto
+git clone https://github.com/thevisrahel/ProyectoFinal_Labarca
+cd ProyectoFinal_Labarca
 
 # 2. Crear entorno virtual
 python -m venv .venv
